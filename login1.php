@@ -31,7 +31,7 @@
 	$_SESSION['user_id']=$user_id;
 	mysqli_close($conn);
 		if($user_authority==1){
-			header("location:admin_user.php");
+			header("location:admin_product.php");
 			
 		}
 		else 

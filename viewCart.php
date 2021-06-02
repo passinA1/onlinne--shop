@@ -37,10 +37,14 @@ $cart = new CartFunction;
         <a href="index.php" class="logo"></a>
         <div class="nav">
 
-            <form action="search.php" method="post" style="padding-top: 20px">
-                <input type="text" name="searchbar"  placeholder="Search">
-                <input type="submit" value="Search">
-            </form>
+        <form action="search.php" method="post" style="margin-top:25px">
+					<div style="float:left">
+					<input type="text" name="searchbar"  placeholder="Search">
+					</div>
+					<div style="float:left">
+					<input type="image" src="img/search.png" >
+					</div>
+				</form>
 
             <ul class="parent">
                 <li class="current">
@@ -57,7 +61,7 @@ $cart = new CartFunction;
             </ul>
 
             <div class="userul" style="float: right;padding-top: 20px">
-                <ul style="width: 50px;text-align: right">
+                <ul style="width: auto;text-align: right">
                     <?php if(!empty($_SESSION['user'])){?>
                         <li class="userInfo">Welcome, <?php echo $_SESSION['user'];?></li>
                         <li	class="userInfo"><a href="logout.php">Log Out</a></li>
@@ -100,10 +104,10 @@ $cart = new CartFunction;
                                 ?>
                                 <tr>
                                     <td><?php echo $item["name"]; ?></td>
-                                    <td><?php echo '$' . $item["price"] . ' USD'; ?></td>
+                                    <td><?php echo '￥' . $item["price"] . ''; ?></td>
                                     <td><input class="form-control" type="number" value="<?php echo $item["qty"]; ?>"
                                                onchange="updateCartItem(this, '<?php echo $item["rowid"]; ?>')"/></td>
-                                    <td class="text-right"><?php echo '$' . $item["subtotal"] . ' USD'; ?></td>
+                                    <td class="text-right"><?php echo '￥' . $item["subtotal"] . ''; ?></td>
                                     <td class="text-right">
                                         <button class="btn btn-sm btn-danger"
                                                 onclick="return confirm('Are you sure?')?window.location.href='cartAction.php?action=removeCartItem&id=<?php echo $item["rowid"]; ?>':false;">
@@ -120,7 +124,7 @@ $cart = new CartFunction;
                                 <td></td>
                                 <td></td>
                                 <td><strong>Cart Total</strong></td>
-                                <td class="text-right"><strong><?php echo '$' . $cart->total() . ' USD'; ?></strong>
+                                <td class="text-right"><strong><?php echo '￥' . $cart->total() . ''; ?></strong>
                                 </td>
                                 <td></td>
                             </tr>

@@ -1,21 +1,31 @@
 <?php
-
-
 session_start();
-
+header("Content-Type: text/html; charset=utf-8");
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbName = "cps3500_final" ;
-$user=$_SESSION['user'];
+
 // Create connection
 $conn = mysqli_connect($servername, $username, $password, $dbName);
 // Check connection
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());}
 
-$sql="select *from users";
+$sql="select *from products";
 $res=mysqli_query($conn,$sql);
+$arr=array();
+
+while($row=mysqli_fetch_array($res)){
+    $p_id[]=$row["product_id"];
+    $p_name[]=$row["product_name"];
+    $price[]=$row["price"];
+    $pic[]    =$row["pic"];
+    $inven[]=$row["inventory"];
+    $arr[]=$row;
+}
+
+$user=$_SESSION['user'];
 
 ?>
 <html>
@@ -39,10 +49,9 @@ $res=mysqli_query($conn,$sql);
                 <li	class="userInfo"><a href="logout.php">Login Out</a></li>
             </ul>
         </div>
-
-
     </div>
 </div>
+
 
 	<aside class="lt_aside_nav content mCustomScrollbar">
 	 <ul>
@@ -56,29 +65,40 @@ $res=mysqli_query($conn,$sql);
 	  </li>
 	 </ul>
 	</aside>
-	<div class = "table table-striped table table-hover" style="float: left;">
+	<div class = "table table-striped table-hover">
 	    <?php
-        header('Content-type: admin_product/css');
-        header("Content-Type: text/html; charset=utf-8");
+		echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"admin_product.css\" />";
 
-        echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"admin_product.css\" />";
-		echo "<table class=\"\" style=\"border-color: grey\">
+	    
+	    $sql="select *from orders";
+	    $res=mysqli_query($conn,$sql);
+		echo "<table>
 		<tr>
-		<th>user id</th>
-		<th>user name</th>
-		<th>password</th>
+		<th>order_id</th>
+		<th>user_id</th>
+		<th>first_name</th>
+		<th>last_name</th>
+		<th>grand_total</th>
+		<th>phone</th>
+		<th>address</th>
+
+		<th>status</th>
 		<th>email</th>
-		<th>authority</th>
+
 		</tr>";
 
 		while($row = $res->fetch_array())//转成数组，且返回第一条数据,当不是一个对象时候退出
 		{
 		echo "<tr>";
-		echo "<td>" . $row['id'] . "</td>";
-		echo "<td>" . $row['user_name'] . "</td>";
-		echo "<td>" . $row['password'] . "</td>";
+		echo "<td>" . $row['order_id'] . "</td>";
+		echo "<td>" . $row['user_id'] . "</td>";
+		echo "<td>" . $row['first_name'] . "</td>";
+		echo "<td>" . $row['last_name'] . "</td>";
+		echo "<td>" . $row['grand_total'] . "</td>";
+		echo "<td>" . $row['phone'] . "</td>";
+		echo "<td>" . $row['address'] . "</td>";
+		echo "<td>" . $row['status'] . "</td>";
 		echo "<td>" . $row['email'] . "</td>";
-		echo "<td>" . $row['authority'] . "</td>";
 		echo "</tr>";
 		}
 		echo "</table>";

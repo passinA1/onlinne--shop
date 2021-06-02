@@ -6,7 +6,6 @@ require_once 'conn.php';
 include_once 'Cart_function.php';
 $cart = new CartFunction;
 $user_id = $_SESSION['user_id'];
-
 ob_start();
 // If the cart is empty, redirect to the products page
 if ($cart->total_items() <= 0) {
@@ -49,10 +48,14 @@ if(!$user_id){
         <a href="index.php" class="logo"></a>
         <div class="nav">
 
-            <form action="search.php" method="post" style="padding-top: 20px">
-                <input type="text" name="searchbar"  placeholder="Search">
-                <input type="submit" value="Search">
-            </form>
+        <form action="search.php" method="post" style="margin-top:25px">
+					<div style="float:left">
+					<input type="text" name="searchbar"  placeholder="Search">
+					</div>
+					<div style="float:left">
+					<input type="image" src="img/search.png" >
+					</div>
+				</form>
 
             <ul class="parent">
                 <li class="current">
@@ -69,7 +72,7 @@ if(!$user_id){
             </ul>
 
             <div class="userul" style="float: right;padding-top: 20px">
-                <ul style="width: 50px;text-align: right">
+                <ul style="width: auto;text-align: right">
                     <?php if(!empty($_SESSION['user'])){?>
                         <li class="userInfo">Welcome, <?php echo $_SESSION['user'];?></li>
                         <li	class="userInfo"><a href="logout.php">Log Out</a></li>
@@ -117,16 +120,16 @@ if(!$user_id){
                                 <li class="list-group-item d-flex justify-content-between lh-condensed">
                                     <div>
                                         <h6 class="my-0"><?php echo $item["name"]; ?></h6>
-                                        <small class="text-muted"><?php echo '$' . $item["price"]; ?>
+                                        <small class="text-muted"><?php echo '￥' . $item["price"]; ?>
                                             (<?php echo $item["qty"]; ?>)</small>
                                     </div>
-                                    <span class="text-muted"><?php echo '$' . $item["subtotal"]; ?></span>
+                                    <span class="text-muted"><?php echo '￥' . $item["subtotal"]; ?></span>
                                 </li>
                             <?php }
                         } ?>
                         <li class="list-group-item d-flex justify-content-between">
-                            <span>Total (USD)</span>
-                            <strong><?php echo '$' . $cart->total(); ?></strong>
+                            <span>Total (CNY)</span>
+                            <strong><?php echo '￥' . $cart->total(); ?></strong>
                         </li>
                     </ul>
                     <a href="Shopping.php" class="btn btn-block btn-info">Add Items</a>

@@ -62,7 +62,7 @@ $balance = $bb[0];
             </ul>
 
             <div class="userul" style="float: right;padding-top: 20px">
-                <ul style="width: 50px;text-align: right">
+                <ul style="width: auto;text-align: right">
                     <?php if(!empty($_SESSION['user'])){?>
                         <li class="userInfo">Welcome, <?php echo $_SESSION['user'];?></li>
                         <li	class="userInfo"><a href="logout.php">Log Out</a></li>
@@ -91,7 +91,7 @@ $balance = $bb[0];
             <div class="s">
                 <div class="hdr"><h1>Order Info</h1></div>
                 <p><b>Reference ID:</b> #<?php echo $orderInfo['order_id']; ?></p>
-                <p><b>Total:</b> <?php echo '$' . $orderInfo['grand_total'] . ' USD'; ?></p>
+                <p><b>Total:</b> <?php echo '￥' . $orderInfo['grand_total'] . ''; ?></p>
                 <p><b>Placed On:</b> <?php echo $orderInfo['created']; ?></p>
                 <p><b>Buyer Name:</b> <?php echo $orderInfo['first_name'] . ' ' . $orderInfo['last_name']; ?></p>
                 <p><b>Email:</b> <?php echo $orderInfo['email']; ?></p>
@@ -122,9 +122,9 @@ $balance = $bb[0];
                             ?>
                             <tr>
                                 <td><?php echo $item["product_name"]; ?></td>
-                                <td><?php echo '$' . $price . ' USD'; ?></td>
+                                <td><?php echo '￥' . $price . ''; ?></td>
                                 <td><?php echo $quantity; ?></td>
-                                <td><?php echo '$' . $sub_total . ' USD'; ?></td>
+                                <td><?php echo '￥' . $sub_total . ''; ?></td>
                             </tr>
                         <?php }
                     } ?>
