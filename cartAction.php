@@ -3,12 +3,13 @@
 require_once 'Cart_function.php';
 $cart = new CartFunction;
 $user_id = $_SESSION['user_id'];
+$conn = mysqli_connect('localhost','root','','cps3500_final');
 // Include the database config file
 require_once 'conn.php';
 
 // Default redirect page
 $redirectLoc = 'index.php';
-
+$new_balance = 0;
 // Process request based on the specified action
 if(isset($_REQUEST['action']) && !empty($_REQUEST['action'])){
     if($_REQUEST['action'] == 'addToCart' && !empty($_REQUEST['id'])){
@@ -59,6 +60,10 @@ if(isset($_REQUEST['action']) && !empty($_REQUEST['action'])){
         $phone = strip_tags($_POST['phone']);
         $address = strip_tags($_POST['address']);
 
+        $FROM = "order_information@ez.com";
+        $headers = "From $FROM";
+        $message = "Hello! This is the email from EZ SHOP. Please keep your order information!";
+
         $errorMsg = '';
         if(empty($first_name)){
             $errorMsg .= 'Please enter your first name.<br/>';
@@ -75,18 +80,21 @@ if(isset($_REQUEST['action']) && !empty($_REQUEST['action'])){
         if(empty($address)){
             $errorMsg .= 'Please enter your address.<br/>';
         }
-        $balance = "SELECT balance FROM users where id=$user_id";
+
         if(empty($errorMsg)){
             if(empty($errorMsg)){
                 $custID = $db->insert_id;
 
                 // Insert order info in the database
                 $insertOrder = $db->query("INSERT INTO orders (user_id, grand_total, created, status, first_name, last_name, email, phone, address) VALUES ($user_id, '".$cart->total()."', NOW(), 'Pending', '".$first_name."', '".$last_name."', '".$email."', '".$phone."', '".$address."')");
-                $balance = "SELECT balance FROM users where id=$user_id";
+                $sql_balance = "SELECT balance FROM users where id=$user_id";
+                $result_ba=mysqli_query($conn,$sql_balance);
+                $bb=mysqli_fetch_array($result_ba);
+                $balance = $bb[0];
 
                 $total = $cart->total();
                 $new_balance = $balance-$total;
-                if($new_balance<0){
+                if($new_balance>0){
                     if($insertOrder){
                         $orderID = $db->insert_id;
 
@@ -116,6 +124,9 @@ if(isset($_REQUEST['action']) && !empty($_REQUEST['action'])){
 
                             // Redirect to the status page
                             $redirectLoc = 'orderSuccess.php?id='.$orderID;
+                            //send email
+                            mail($email, "Thanks for your shopping on EZ SHOP.", $message, $headers);
+
                         }else{
                             $sessData['status']['type'] = 'error';
                             $sessData['status']['msg'] = 'Some problem occurred, please try again.1';

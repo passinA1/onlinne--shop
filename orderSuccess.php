@@ -6,15 +6,22 @@ if (!isset($_REQUEST['id'])) {
 // Include the database config file
 require_once 'conn.php';
 include_once 'Cart_function.php';
+$user_id = $_SESSION['user_id'];
 $cart = new CartFunction;
 // Fetch order details from database
 $result = $db->query("SELECT r.*, c.first_name, c.last_name, c.email, c.phone FROM orders as r LEFT JOIN orders as c ON c.order_id = r.order_id WHERE r.order_id = " . $_REQUEST['id']);
-
+$conn = mysqli_connect('localhost','root','','cps3500_final');
 if ($result->num_rows > 0) {
     $orderInfo = $result->fetch_assoc();
 } else {
     header("Location: index.php");
 }
+$sql_balance = "SELECT balance FROM users where id=$user_id";
+$result_ba=mysqli_query($conn,$sql_balance);
+$bb=mysqli_fetch_array($result_ba);
+$balance = $bb[0];
+
+
 ?>
 
 <!DOCTYPE html>
@@ -78,17 +85,18 @@ if ($result->num_rows > 0) {
         <?php if (!empty($orderInfo)) { ?>
             <div class="col-md-12">
                 <div class="alert alert-success">Your order has been placed successfully.</div>
-            </div>
+                <div class="alert alert-success">An email with your order information has been sent!</div>
 
             <!-- Order status & shipping info -->
             <div class="s">
-                <div class="hdr">Order Info</div>
-                <p><b>Reference ID:</b> #<?php echo $orderInfo['order_id']; ?></p><br>
-                <p><b>Total:</b> <?php echo '$' . $orderInfo['grand_total'] . ' USD'; ?></p><br>
-                <p><b>Placed On:</b> <?php echo $orderInfo['created']; ?></p><br>
-                <p><b>Buyer Name:</b> <?php echo $orderInfo['first_name'] . ' ' . $orderInfo['last_name']; ?></p><br>
-                <p><b>Email:</b> <?php echo $orderInfo['email']; ?></p><br>
-                <p><b>Phone:</b> <?php echo $orderInfo['phone']; ?></p><br>
+                <div class="hdr"><h1>Order Info</h1></div>
+                <p><b>Reference ID:</b> #<?php echo $orderInfo['order_id']; ?></p>
+                <p><b>Total:</b> <?php echo '$' . $orderInfo['grand_total'] . ' USD'; ?></p>
+                <p><b>Placed On:</b> <?php echo $orderInfo['created']; ?></p>
+                <p><b>Buyer Name:</b> <?php echo $orderInfo['first_name'] . ' ' . $orderInfo['last_name']; ?></p>
+                <p><b>Email:</b> <?php echo $orderInfo['email']; ?></p>
+                <p><b>Phone:</b> <?php echo $orderInfo['phone']; ?></p>
+                <p><b>Your Balance:</b><?php echo $balance; ?></p>
             </div>
 
             <!-- Order items -->

@@ -6,6 +6,7 @@ require_once 'conn.php';
 include_once 'Cart_function.php';
 $cart = new CartFunction;
 $user_id = $_SESSION['user_id'];
+
 ob_start();
 // If the cart is empty, redirect to the products page
 if ($cart->total_items() <= 0) {
