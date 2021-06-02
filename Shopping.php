@@ -21,28 +21,39 @@ require_once 'conn.php';
 </head>
 <body>
 
-<div class="topbar">
+<div class ="topbar">
     <div class="wrapper">
         <a href="index.php" class="logo"></a>
         <div class="nav">
+
+            <form action="search.php" method="post" style="padding-top: 20px">
+                <input type="text" name="searchbar"  placeholder="Search">
+                <input type="submit" value="Search">
+            </form>
+
             <ul class="parent">
                 <li class="current">
-                    <a href="index.php">HOME</a>
+                    <a href="index.php" >HOME</a>
                     <span class="lines"></span></li>
                 <li class="current"><a href="cart.php">SHOPPING CART</a>
                     <span class="lines"></span></li>
             </ul>
 
-            <ul class="userul">
-                <?php if (!empty($_SESSION['user'])) { ?>
-                    <li class="userInfo">Welcome, <?php echo $_SESSION['user']; ?></li>
-                    <li class="userInfo"><a href="logout.php">Login Out</a></li>
+            <div class="userul" style="float: right;padding-top: 20px">
+                <ul style="width: 50px;text-align: right">
+                    <?php if(!empty($_SESSION['user'])){?>
+                        <li class="userInfo">Welcome, <?php echo $_SESSION['user'];?></li>
+                        <li	class="userInfo"><a href="logout.php">Login Out</a></li>
 
-                <?php } else { ?>
-                    <li class="userInfo"><a href="login.php">Login</a></li>
-                <?php } ?>
-            </ul>
+                    <?php }else{?>
+                        <li class="userInfo"><a href="login.php">Login</a></li>
+                    <?php }?>
+                </ul>
+            </div>
+
+
         </div>
+
     </div>
 </div>
 
@@ -70,7 +81,7 @@ require_once 'conn.php';
                         <h5 class="card-title"><?php echo $row["product_name"]; ?></h5>
                         <h6 class="card-subtitle mb-2 text-muted">
                             Price: <?php echo '$' . $row["price"] . ' USD'; ?></h6>
-                        <p class="card-text"><?php echo $row["description"]; ?></p>
+
                         <a href="cartAction.php?action=addToCart&id=<?php echo $row["product_id"]; ?>"
                            class="btn btn-primary">Add to Cart</a>
                     </div>

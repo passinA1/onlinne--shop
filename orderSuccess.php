@@ -1,18 +1,19 @@
 <?php
 if (!isset($_REQUEST['id'])) {
-    header("Location: Shopping.php");
+    header("Location: index.php");
 }
 
 // Include the database config file
 require_once 'conn.php';
-
+include_once 'Cart_function.php';
+$cart = new CartFunction;
 // Fetch order details from database
 $result = $db->query("SELECT r.*, c.first_name, c.last_name, c.email, c.phone FROM orders as r LEFT JOIN orders as c ON c.order_id = r.order_id WHERE r.order_id = " . $_REQUEST['id']);
 
 if ($result->num_rows > 0) {
     $orderInfo = $result->fetch_assoc();
 } else {
-    header("Location: Shopping.php");
+    header("Location: index.php");
 }
 ?>
 
@@ -29,28 +30,45 @@ if ($result->num_rows > 0) {
 <body>
 
 
-<div class="topbar">
+<div class ="topbar">
     <div class="wrapper">
         <a href="index.php" class="logo"></a>
         <div class="nav">
+
+            <form action="search.php" method="post" style="padding-top: 20px">
+                <input type="text" name="searchbar"  placeholder="Search">
+                <input type="submit" value="Search">
+            </form>
+
             <ul class="parent">
                 <li class="current">
-                    <a href="index.php">HOME</a>
+                    <a href="index.php" >HOME</a>
                     <span class="lines"></span></li>
-                <li class="current"><a href="cart.php">SHOPPING CART</a>
+
+
+                <li class="current" style="float: left">
+                    <a href="viewCart.php" title="View Cart" ><img src="img/cart.jpg" width="30px"><?php echo ($cart->total_items() > 0) ? $cart->total_items() . ' Item(s)' : 'Empty'; ?></a>
+
+
+
                     <span class="lines"></span></li>
             </ul>
 
-            <ul class="userul">
-                <?php if (!empty($_SESSION['user'])) { ?>
-                    <li class="userInfo">Welcome, <?php echo $_SESSION['user']; ?></li>
-                    <li class="userInfo"><a href="logout.php">Login Out</a></li>
+            <div class="userul" style="float: right;padding-top: 20px">
+                <ul style="width: 50px;text-align: right">
+                    <?php if(!empty($_SESSION['user'])){?>
+                        <li class="userInfo">Welcome, <?php echo $_SESSION['user'];?></li>
+                        <li	class="userInfo"><a href="logout.php">Log Out</a></li>
 
-                <?php } else { ?>
-                    <li class="userInfo"><a href="login.php">Login</a></li>
-                <?php } ?>
-            </ul>
+                    <?php }else{?>
+                        <li class="userInfo"><a href="login.php">Login</a></li>
+                    <?php }?>
+                </ul>
+            </div>
+
+
         </div>
+
     </div>
 </div>
 

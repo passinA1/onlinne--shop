@@ -32,28 +32,45 @@ $cart = new CartFunction;
 <body>
 
 
-<div class="topbar">
+<div class ="topbar">
     <div class="wrapper">
         <a href="index.php" class="logo"></a>
         <div class="nav">
+
+            <form action="search.php" method="post" style="padding-top: 20px">
+                <input type="text" name="searchbar"  placeholder="Search">
+                <input type="submit" value="Search">
+            </form>
+
             <ul class="parent">
                 <li class="current">
-                    <a href="index.php">HOME</a>
+                    <a href="index.php" >HOME</a>
                     <span class="lines"></span></li>
-                <li class="current"><a href="cart.php">SHOPPING CART</a>
+
+
+                <li class="current" style="float: left">
+                    <a href="viewCart.php" title="View Cart" ><img src="img/cart.jpg" width="30px"><?php echo ($cart->total_items() > 0) ? $cart->total_items() . ' Item(s)' : 'Empty'; ?></a>
+
+
+
                     <span class="lines"></span></li>
             </ul>
 
-            <ul class="userul">
-                <?php if (!empty($_SESSION['user'])) { ?>
-                    <li class="userInfo">Welcome, <?php echo $_SESSION['user']; ?></li>
-                    <li class="userInfo"><a href="logout.php">Login Out</a></li>
+            <div class="userul" style="float: right;padding-top: 20px">
+                <ul style="width: 50px;text-align: right">
+                    <?php if(!empty($_SESSION['user'])){?>
+                        <li class="userInfo">Welcome, <?php echo $_SESSION['user'];?></li>
+                        <li	class="userInfo"><a href="logout.php">Log Out</a></li>
 
-                <?php } else { ?>
-                    <li class="userInfo"><a href="login.php">Login</a></li>
-                <?php } ?>
-            </ul>
+                    <?php }else{?>
+                        <li class="userInfo"><a href="login.php">Login</a></li>
+                    <?php }?>
+                </ul>
+            </div>
+
+
         </div>
+
     </div>
 </div>
 
@@ -115,7 +132,7 @@ $cart = new CartFunction;
             <div class="col mb-2">
                 <div class="row">
                     <div class="col-sm-12  col-md-6">
-                        <a href="Shopping.php" class="btn btn-block btn-light">Continue Shopping</a>
+                        <a href="index.php" class="btn btn-block btn-light">Continue Shopping</a>
                     </div>
                     <div class="col-sm-12 col-md-6 text-right">
                         <?php if ($cart->total_items() > 0) {

@@ -2,12 +2,12 @@
 // Initialize shopping cart class
 require_once 'Cart_function.php';
 $cart = new CartFunction;
-
+$user_id = $_SESSION['user_id'];
 // Include the database config file
 require_once 'conn.php';
 
 // Default redirect page
-$redirectLoc = 'Shopping.php';
+$redirectLoc = 'index.php';
 
 // Process request based on the specified action
 if(isset($_REQUEST['action']) && !empty($_REQUEST['action'])){
@@ -30,7 +30,7 @@ if(isset($_REQUEST['action']) && !empty($_REQUEST['action'])){
 
 
         // Redirect to cart page
-        $redirectLoc = $insertItem?'viewCart.php':'Shopping.php';
+        $redirectLoc = $insertItem?'viewCart.php':'index.php';
     }elseif($_REQUEST['action'] == 'updateCartItem' && !empty($_REQUEST['id'])){
         // Update item data in cart
         $itemData = array(
@@ -75,43 +75,60 @@ if(isset($_REQUEST['action']) && !empty($_REQUEST['action'])){
         if(empty($address)){
             $errorMsg .= 'Please enter your address.<br/>';
         }
-
+        $balance = "SELECT balance FROM users where id=$user_id";
         if(empty($errorMsg)){
             if(empty($errorMsg)){
                 $custID = $db->insert_id;
 
                 // Insert order info in the database
-                $insertOrder = $db->query("INSERT INTO orders (user_id, grand_total, created, status, first_name, last_name, email, phone, address) VALUES ($custID, '".$cart->total()."', NOW(), 'Pending', '".$first_name."', '".$last_name."', '".$email."', '".$phone."', '".$address."')");
+                $insertOrder = $db->query("INSERT INTO orders (user_id, grand_total, created, status, first_name, last_name, email, phone, address) VALUES ($user_id, '".$cart->total()."', NOW(), 'Pending', '".$first_name."', '".$last_name."', '".$email."', '".$phone."', '".$address."')");
+                $balance = "SELECT balance FROM users where id=$user_id";
 
-                if($insertOrder){
-                    $orderID = $db->insert_id;
+                $total = $cart->total();
+                $new_balance = $balance-$total;
+                if($new_balance<0){
+                    if($insertOrder){
+                        $orderID = $db->insert_id;
 
-                    // Retrieve cart items
-                    $cartItems = $cart->contents();
+                        // Retrieve cart items
+                        $cartItems = $cart->contents();
 
-                    // Prepare SQL to insert order items
-                    $sql = '';
-                    foreach($cartItems as $item){
-                        $sql .= "INSERT INTO product_orders (order_id, product_id, quantity) VALUES ('".$orderID."', '".$item['id']."', '".$item['qty']."');";
-                    }
+                        // Prepare SQL to insert order items
+                        $sql = '';
+                        $sql2 = '';
+                        $sql1 ='';
+                        foreach($cartItems as $item){
+                            $sql .= "INSERT INTO product_orders (order_id, product_id, quantity) VALUES ('".$orderID."', '".$item['id']."', '".$item['qty']."');";
+                            $sql1 .= "UPDATE users set balance=$new_balance where id=$user_id;";
+                            $sql2 .= "UPDATE products set inventory=inventory-'".$item['qty']."' where product_id='".$item['id']."' ;";
+                        }
 
-                    // Insert order items in the database
-                    $insertOrderItems = $db->multi_query($sql);
+                        // Insert order items in the database
+                        // update inventory in the database
+                        // update balance
+                        $insertOrderItems = $db->multi_query($sql);
+                        $updateInventory = $db->multi_query($sql2);
+                        $updateBalance = $db->multi_query($sql1);
 
-                    if($insertOrderItems){
-                        // Remove all items from cart
-                        $cart->destroy();
+                        if($insertOrderItems && $updateInventory && $updateBalance){
+                            // Remove all items from cart
+                            $cart->destroy();
 
-                        // Redirect to the status page
-                        $redirectLoc = 'orderSuccess.php?id='.$orderID;
+                            // Redirect to the status page
+                            $redirectLoc = 'orderSuccess.php?id='.$orderID;
+                        }else{
+                            $sessData['status']['type'] = 'error';
+                            $sessData['status']['msg'] = 'Some problem occurred, please try again.1';
+                        }
                     }else{
                         $sessData['status']['type'] = 'error';
-                        $sessData['status']['msg'] = 'Some problem occurred, please try again.1';
+                        $sessData['status']['msg'] = 'Some problem occurred, please try again.2';
                     }
                 }else{
                     $sessData['status']['type'] = 'error';
-                    $sessData['status']['msg'] = 'Some problem occurred, please try again.2';
+                    $sessData['status']['msg'] = 'You do not have enough money.';
                 }
+
             }else{
                 $sessData['status']['type'] = 'error';
                 $sessData['status']['msg'] = 'Some problem occurred, please try again.3';

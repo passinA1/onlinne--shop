@@ -2,17 +2,22 @@
 session_start();
 header("Content-Type: text/html; charset=utf-8");
 
+include_once  'Cart_function.php';
+$cart = new CartFunction;
+
+require_once 'conn.php';
+
 $conn = mysqli_connect('localhost','root','','cps3500_final');
 $sql="select *from products";
 $res=mysqli_query($conn,$sql);
 
-$row=array();
-while($row=$res->fetch_array()){
-$p_id[]   =$row["product_id"];
-$p_name[] =$row["product_name"];
-$price[]  =$row["price"];
-$pic[]    =$row["pic"];
-$arr[]    =$row;
+$rows=array();
+while($rows=$res->fetch_array()){
+$p_id[]   =$rows["product_id"];
+$p_name[] =$rows["product_name"];
+$price[]  =$rows["price"];
+$pic[]    =$rows["pic"];
+$arr[]    =$rows;
 }
 if(!empty($_SESSION['user'])){
 $user=$_SESSION['user'];
@@ -40,7 +45,13 @@ $user_id=$_SESSION['user_id'];
 					<li class="current">
 					<a href="index.php" >HOME</a>
 					<span class="lines"></span></li>
-					<li class="current"><a href="cart.php">SHOPPING CART</a>
+
+
+					<li class="current" style="float: left">
+                        <a href="viewCart.php" title="View Cart" ><img src="img/cart.jpg" width="30px"><?php echo ($cart->total_items() > 0) ? $cart->total_items() . ' Item(s)' : 'Empty'; ?></a>
+
+
+
 					<span class="lines"></span></li>
 				</ul>
 
@@ -48,7 +59,7 @@ $user_id=$_SESSION['user_id'];
                     <ul style="width: 50px;text-align: right">
                         <?php if(!empty($_SESSION['user'])){?>
                             <li class="userInfo">Welcome, <?php echo $_SESSION['user'];?></li>
-                            <li	class="userInfo"><a href="logout.php">Login Out</a></li>
+                            <li	class="userInfo"><a href="logout.php">Log Out</a></li>
 
                         <?php }else{?>
                             <li class="userInfo"><a href="login.php">Login</a></li>
@@ -61,36 +72,39 @@ $user_id=$_SESSION['user_id'];
 
 		</div>
 	</div>
-	
-	<div class="home">
-		<div id="main">
-			<ul>
-<?php
 
-			foreach($arr  as $key => $value){ ?>
-				<li>
-					<div class="item">
-						<div class="item-pic"><a>
-						<img alt="item 1" src="<?php echo $pic[$key]?>" title="" width="240" height="240"></a>
-						</div>
-						<div class="item-name"><a title=""><?php echo $p_name[$key];?></a>
-						</div>
-						<div class="item-price"><strong>￥<?php echo $price[$key];?></strong><span id="p200"></span>
-						</div>
-						<div class="col-sm-12 col-md-6 text-right">
-							<form method="post" href="">
-							<a href="add_cart.php?user_id=<?php echo $_SESSION['user_id'] ?>&product_id=<?php echo $p_id[$key]?>&product_name=<?php echo $p_name[$key]?>&price=<?php echo $price[$key]?>" class="btn btn-lg btn-block btn-primary" style="font-size:15px;width:80%;margin-left:-15px;">Add to Cart</a>
-							</form>
-							
-						</div>
-					</div>
-				</li>
-<?php } ?>
-				
+    <div class="home">
+        <div id="main">
 
-			</ul>
-		</div>
-	</div>
+            <ul>
+                <div class="row col-lg-12">
+                    <?php
+                    // Get products from database
+                    $result = $db->query("SELECT * FROM products ORDER BY product_id DESC LIMIT 10");
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            ?>
+                            <div class="card col-lg-4">
+                                <div class="card-body">
+                                    <img src="<?php echo $row["pic"]?>" width="240" height="240">
+                                    <h5 class="card-title"><?php echo $row["product_name"]; ?></h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        Price: <?php echo '$' . $row["price"] . ' USD'; ?></h6>
+
+                                    <a href="cartAction.php?action=addToCart&id=<?php echo $row["product_id"]; ?>"
+                                       class="btn btn-primary">Add to Cart</a>
+                                </div>
+                            </div>
+                        <?php }
+                    } else { ?>
+                        <p>Product(s) not found.....</p>
+                    <?php } ?>
+                </div>
+
+
+            </ul>
+        </div>
+    </div>
 
 </body>
 </html>

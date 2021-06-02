@@ -9,7 +9,7 @@ $user_id = $_SESSION['user_id'];
 ob_start();
 // If the cart is empty, redirect to the products page
 if ($cart->total_items() <= 0) {
-    header("Location: Shopping.php");
+    header("Location: index.php");
 }
 
 // Get posted data from session
@@ -23,7 +23,7 @@ if (!empty($sessData['status']['msg'])) {
     $statusMsgType = $sessData['status']['type'];
     unset($_SESSION['sessData']['status']);
 }
-if(!$u_id){
+if(!$user_id){
 
     header("Refresh:0;url=index.php");
     echo "<script>alert('please login first')</script>";
@@ -43,28 +43,45 @@ if(!$u_id){
 </head>
 <body>
 
-<div class="topbar">
+<div class ="topbar">
     <div class="wrapper">
         <a href="index.php" class="logo"></a>
         <div class="nav">
+
+            <form action="search.php" method="post" style="padding-top: 20px">
+                <input type="text" name="searchbar"  placeholder="Search">
+                <input type="submit" value="Search">
+            </form>
+
             <ul class="parent">
                 <li class="current">
-                    <a href="index.php">HOME</a>
+                    <a href="index.php" >HOME</a>
                     <span class="lines"></span></li>
-                <li class="current"><a href="cart.php">SHOPPING CART</a>
+
+
+                <li class="current" style="float: left">
+                    <a href="viewCart.php" title="View Cart" ><img src="img/cart.jpg" width="30px"><?php echo ($cart->total_items() > 0) ? $cart->total_items() . ' Item(s)' : 'Empty'; ?></a>
+
+
+
                     <span class="lines"></span></li>
             </ul>
 
-            <ul class="userul">
-                <?php if (!empty($_SESSION['user'])) { ?>
-                    <li class="userInfo">Welcome, <?php echo $_SESSION['user']; ?></li>
-                    <li class="userInfo"><a href="logout.php">Login Out</a></li>
+            <div class="userul" style="float: right;padding-top: 20px">
+                <ul style="width: 50px;text-align: right">
+                    <?php if(!empty($_SESSION['user'])){?>
+                        <li class="userInfo">Welcome, <?php echo $_SESSION['user'];?></li>
+                        <li	class="userInfo"><a href="logout.php">Log Out</a></li>
 
-                <?php } else { ?>
-                    <li class="userInfo"><a href="login.php">Login</a></li>
-                <?php } ?>
-            </ul>
+                    <?php }else{?>
+                        <li class="userInfo"><a href="login.php">Login</a></li>
+                    <?php }?>
+                </ul>
+            </div>
+
+
         </div>
+
     </div>
 </div>
 
