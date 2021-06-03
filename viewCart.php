@@ -37,14 +37,10 @@ $cart = new CartFunction;
         <a href="index.php" class="logo"></a>
         <div class="nav">
 
-        <form action="search.php" method="post" style="margin-top:25px">
-					<div style="float:left">
-					<input type="text" name="searchbar"  placeholder="Search">
-					</div>
-					<div style="float:left">
-					<input type="image" src="img/search.png" >
-					</div>
-				</form>
+            <form action="search.php" method="post" style="padding-top: 20px">
+                <input type="text" name="searchbar"  placeholder="Search">
+                <input type="submit" value="Search">
+            </form>
 
             <ul class="parent">
                 <li class="current">
@@ -97,35 +93,27 @@ $cart = new CartFunction;
                         </thead>
                         <tbody>
                         <?php
-                        if ($cart->total_items() > 0){
+                        if($cart->total_items() > 0){
                             // Get cart items from session
                             $cartItems = $cart->contents();
-                            foreach ($cartItems as $item) {
+                            foreach($cartItems as $item){
                                 ?>
                                 <tr>
                                     <td><?php echo $item["name"]; ?></td>
-                                    <td><?php echo '￥' . $item["price"] . ''; ?></td>
-                                    <td><input class="form-control" type="number" value="<?php echo $item["qty"]; ?>"
-                                               onchange="updateCartItem(this, '<?php echo $item["rowid"]; ?>')"/></td>
-                                    <td class="text-right"><?php echo '￥' . $item["subtotal"] . ''; ?></td>
-                                    <td class="text-right">
-                                        <button class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure?')?window.location.href='cartAction.php?action=removeCartItem&id=<?php echo $item["rowid"]; ?>':false;">
-                                            <i class="itrash"></i></button>
-                                    </td>
+                                    <td><?php echo '￥'.$item["price"].''; ?></td>
+                                    <td><input class="form-control" type="number" value="<?php echo $item["qty"]; ?>" onchange="updateCartItem(this, '<?php echo $item["rowid"]; ?>')"/></td>
+                                    <td class="text-right"><?php echo '￥'.$item["subtotal"].''; ?></td>
+                                    <td class="text-right"><button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')?window.location.href='cartAction.php?action=removeCartItem&id=<?php echo $item["rowid"]; ?>':false;"><i class="itrash"></i> </button> </td>
                                 </tr>
-                            <?php }
-                        }else{ ?>
-                        <tr>
-                            <td colspan="5"><p>Your cart is empty.....</p></td>
+                            <?php } }else{ ?>
+                        <tr><td colspan="5"><p>Your cart is empty.....</p></td>
                             <?php } ?>
-                            <?php if ($cart->total_items() > 0){ ?>
+                            <?php if($cart->total_items() > 0){ ?>
                             <tr>
                                 <td></td>
                                 <td></td>
                                 <td><strong>Cart Total</strong></td>
-                                <td class="text-right"><strong><?php echo '￥' . $cart->total() . ''; ?></strong>
-                                </td>
+                                <td class="text-right"><strong><?php echo '￥'.$cart->total().''; ?></strong></td>
                                 <td></td>
                             </tr>
                         <?php } ?>
